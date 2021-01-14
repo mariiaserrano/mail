@@ -7,6 +7,7 @@ import Servicios.ServiciosMails;
 import Servicios.ServiciosUsers;
 import Utils.Constantes;
 import Utils.HashPassword;
+import Utils.codigoRandom;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -38,12 +39,13 @@ public class RegistroController implements Initializable {
     @FXML
     private void clickAddUser(ActionEvent actionEvent) {
         ServiciosMails svmails = new ServiciosMails();
+        String codigo = codigoRandom.randomBytes();
         HashPassword hs = new HashPassword();
         Usuario newUser = new Usuario(fxUsuario.getText(),hs.hashPassword(fxPassRegistro.getText()),
-                fxCorreo.getText(),"codigo2",1);
+                fxCorreo.getText(),codigo,0);
         String add = addUser(newUser);
-        String mensaje = "Este es un mensaje de verificacion. Pulsa el siguiente enlace para verificar cuenta";
-        svmails.getMail("mensaje prueba", "Correo de Verificacion",fxCorreo.getText() );
+        String mensaje = "Este es un mensaje de verificacion.<html><a href=http://localhost:8080/RegistroServer-1.0-SNAPSHOT/activar?codigo="+codigo+" >Pincha aqui</a> </html>";
+        svmails.getMail(mensaje, "Correo de Verificacion",fxCorreo.getText() );
         limpiarCajas();
         alert.setContentText(add);
         alert.showAndWait();

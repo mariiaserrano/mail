@@ -1,12 +1,10 @@
 package Servlet;
 
-import Model.Mail;
 import Servicios.MandarMail;
-import lombok.SneakyThrows;
+import utils.codigoRandom;
 
 import javax.mail.MessagingException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "ServletRegistro", urlPatterns = {"/registro"})
