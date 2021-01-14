@@ -97,8 +97,12 @@ public class DaoUsuarios {
             }
 
             if (user != null) {
-                result.set(Either.right(user));
-
+                if(user.getActivado()==1) {
+                    result.set(Either.right(user));
+                }
+                else {
+                    result.set(Either.left("error usuario no activado"));
+                }
             }
 
         } catch (Exception e) {

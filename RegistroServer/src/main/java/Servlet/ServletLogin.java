@@ -23,7 +23,7 @@ public class ServletLogin extends HttpServlet {
         UsuarioLogin usuarioLogin = (UsuarioLogin) request.getAttribute("usuarioLogin");
         sv_usuarios.getUsuarioLogin(usuarioLogin)
                 .peek(usuario -> {
-                    request.setAttribute("respuesta", usuario);
+                    request.setAttribute("respuesta", usuarioLogin);
                     request.getSession().setAttribute("usuarioLogin", usuario);
                     response.setStatus(HttpServletResponse.SC_OK);
                 })

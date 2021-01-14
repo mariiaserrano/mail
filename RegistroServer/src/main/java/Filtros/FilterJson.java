@@ -2,6 +2,7 @@ package Filtros;
 
 
 
+import Model.Mail;
 import Model.Usuario;
 import Model.UsuarioLogin;
 import com.google.gson.Gson;
@@ -17,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Log4j2
-@WebFilter(filterName = "FilterJson", urlPatterns = {"/login", "/add"})
+@WebFilter(filterName = "FilterJson", urlPatterns = {"/login", "/add","/registro"})
 public class FilterJson implements Filter {
 
 
@@ -34,6 +35,20 @@ public class FilterJson implements Filter {
                             Try.of(() -> gson.fromJson(s, UsuarioLogin.class))
                                     .onSuccess(usuarioLogin ->
                                             req.setAttribute("usuarioLogin", usuarioLogin))
+                                    .onFailure(throwable -> {
+                                        log.error(throwable.getMessage(), throwable);
+                                        ((HttpServletResponse) resp).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                                        seguir.set(false);
+                                    });
+                        }
+                );
+
+        //Transforma los mails
+        Optional.ofNullable(req.getParameter("mail"))
+                .ifPresent(s -> {
+                            Try.of(() -> gson.fromJson(s, Mail.class))
+                                    .onSuccess(usuarioLogin ->
+                                            req.setAttribute("mail", usuarioLogin))
                                     .onFailure(throwable -> {
                                         log.error(throwable.getMessage(), throwable);
                                         ((HttpServletResponse) resp).setStatus(HttpServletResponse.SC_BAD_REQUEST);

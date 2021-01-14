@@ -43,8 +43,6 @@ public class LoginController implements Initializable {
             UsuarioLogin login = new UsuarioLogin(fxUser.getText(), fxPass.getText());
             svusers.getUsuarioLogin(login)
                     .peek(usuario -> {
-                        usuarioLogin = usuario;
-                        principalController.setUsuarioSession(usuarioLogin);
                         principalController.cargarBienvenida();
                     })
                     .peekLeft(s -> {

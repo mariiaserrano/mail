@@ -1,6 +1,9 @@
 package Controllers;
 
+import Dao.DaoMails;
+import Model.Mail;
 import Model.Usuario;
+import Servicios.ServiciosMails;
 import Servicios.ServiciosUsers;
 import Utils.Constantes;
 import Utils.HashPassword;
@@ -34,10 +37,13 @@ public class RegistroController implements Initializable {
 
     @FXML
     private void clickAddUser(ActionEvent actionEvent) {
+        ServiciosMails svmails = new ServiciosMails();
         HashPassword hs = new HashPassword();
         Usuario newUser = new Usuario(fxUsuario.getText(),hs.hashPassword(fxPassRegistro.getText()),
                 fxCorreo.getText(),"codigo2",1);
         String add = addUser(newUser);
+        Mail newMail= new Mail(fxCorreo.getText(),"Enviado desde app ","enviado");
+       // svmails.getMail(newMail);
         limpiarCajas();
         alert.setContentText(add);
         alert.showAndWait();
