@@ -101,8 +101,11 @@ public class DaoUsuarios {
                     result.set(Either.right(user));
                 }
                 else {
-                    result.set(Either.left("error usuario no activado"));
+                    result.set(Either.left("Usuario no activado. Verifique su email para continuar "));
                 }
+            }
+            else {
+                result.set(Either.left("Usuario o contraseña incorrectos"));
             }
 
         } catch (Exception e) {

@@ -48,7 +48,7 @@ public class MandarMail {
 //    }
 
 
-    public void generateAndSendEmail(Mail mail ) throws MessagingException {
+    public void generateAndSendEmail(String to, String msg, String subject) throws MessagingException {
         Properties mailServerProperties;
         Session getMailSession;
         MimeMessage generateMailMessage;
@@ -65,9 +65,9 @@ public class MandarMail {
 
         getMailSession = Session.getDefaultInstance(mailServerProperties, null);
         generateMailMessage = new MimeMessage(getMailSession);
-        generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(mail.getDestinatario()));
-        generateMailMessage.setSubject(mail.getAsunto());
-        String emailBody = mail.getMensaje();
+        generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+        generateMailMessage.setSubject(subject);
+        String emailBody = msg;
         generateMailMessage.setContent(emailBody, "text/html");
 
 

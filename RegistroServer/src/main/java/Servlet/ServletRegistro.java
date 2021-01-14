@@ -16,19 +16,15 @@ public class ServletRegistro extends javax.servlet.http.HttpServlet {
     }
 
     protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
-  /* MandarMail mandarMail = new MandarMail();
-        Mail mail = new Mail();
+        MandarMail mandarMail = new MandarMail();
+        String to = request.getParameter("to");
+        String msg = request.getParameter("msg");
+        String subject = request.getParameter("subject");
 
-            mandarMail.generateAndSendEmail(mail)
-                    .peek(mails -> {
-                        request.setAttribute("respuesta", mail);
-                        response.setStatus(HttpServletResponse.SC_OK);
-
-                    })
-                    .peekLeft(s -> {
-                        request.setAttribute("error", s);
-                        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    });
-*/
+        try {
+            mandarMail.generateAndSendEmail(to, msg, subject);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 }

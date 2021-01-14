@@ -42,8 +42,8 @@ public class RegistroController implements Initializable {
         Usuario newUser = new Usuario(fxUsuario.getText(),hs.hashPassword(fxPassRegistro.getText()),
                 fxCorreo.getText(),"codigo2",1);
         String add = addUser(newUser);
-        Mail newMail= new Mail(fxCorreo.getText(),"Enviado desde app ","enviado");
-       // svmails.getMail(newMail);
+        String mensaje = "Este es un mensaje de verificacion. Pulsa el siguiente enlace para verificar cuenta";
+        svmails.getMail("mensaje prueba", "Correo de Verificacion",fxCorreo.getText() );
         limpiarCajas();
         alert.setContentText(add);
         alert.showAndWait();

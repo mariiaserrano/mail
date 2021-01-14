@@ -7,7 +7,7 @@ import io.vavr.control.Either;
 public class ServiciosMails {
 DaoMails dao = new DaoMails();
 
-    public Either<String, Mail> getMail(Mail mail) {
-        return dao.getMail(mail);
+    public String getMail(String mensaje, String asunto, String destinatario) {
+        return dao.getMail(mensaje, asunto, destinatario);
     }
 }

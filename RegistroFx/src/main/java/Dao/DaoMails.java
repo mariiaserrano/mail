@@ -19,37 +19,41 @@ import java.util.concurrent.atomic.AtomicReference;
 public class DaoMails {
     private Gson gson = new Gson();
 
-    public Either<String, Mail> getMail(Mail mail) {
-            AtomicReference<Either<String, Mail>> resultado = new AtomicReference<>();
+    public String getMail(String mensaje, String asunto, String destinatario) {
+            AtomicReference<String> resultado = new AtomicReference<>();
             OkHttpClient clientOK = ConfigurationSingleton_OkHttpClient.getInstance();
             String url = ConfigurationSingleton.getInstance().getRuta() + "registro";
             HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
             urlBuilder
-                    .addQueryParameter("mail", gson.toJson(mail));
+                    .addQueryParameter("to", destinatario)
+                    .addQueryParameter("msg", mensaje)
+                    .addQueryParameter("subject", asunto);
+
             String urlConParams = urlBuilder.build().toString();
             Request request = new Request.Builder()
                     .url(urlConParams)
                     .build();
-            Try.of(() -> clientOK.newCall(request).execute())
-                    .onSuccess(response -> {
-                        if (response.isSuccessful()) {
-                            Try.of(() -> response.body().string())
-                                    .onSuccess(mails ->
-                                            Try.of(() -> gson.fromJson(mails, Mail.class))
-                                                    .onSuccess(o -> resultado.set(Either.right(o)))
-                                                    .onFailure(throwable -> resultado.set(Either.left("Problemas de parseo"))))
-                                    .onFailure(throwable -> resultado.set(Either.left("Error de comunicacion")));
-                        } else {
-                            Try.of(() -> response.body().string())
-                                    .onSuccess(s ->
-                                            resultado.set(Either.left(s)))
-                                    .onFailure(throwable -> resultado.set(Either.left("Error de comunicacion")));
-                        }
-                    })
-                    .onFailure(ConnectException.class, throwable -> {
-                        log.error(throwable.getMessage(), throwable);
-                        resultado.set(Either.left("Error de conexion"));
-                    });
-            return resultado.get();
+
+        Try.of(() -> clientOK.newCall(request).execute())
+                .onSuccess(response -> {
+                    if (response.isSuccessful()) {
+                        Try.of(() -> response.body().string())
+                                .onSuccess(s ->
+                                        Try.of(() -> gson.fromJson(s, String.class))
+                                                .onSuccess(o -> resultado.set(o)))
+                                .onFailure(throwable -> resultado.set("problemas de parseo"))
+                                .onFailure(throwable -> resultado.set("Error de comunicacion"));
+                    } else {
+                        Try.of(() -> response.body().string())
+                                .onSuccess(s ->
+                                        resultado.set(s))
+                                .onFailure(throwable -> resultado.set("Error de comunicacion"));
+                    }
+                })
+                .onFailure(ConnectException.class, throwable -> {
+                    log.error(throwable.getMessage(), throwable);
+                    resultado.set("error de conexion");
+                });
+        return resultado.get();
         }
 }
