@@ -21,7 +21,7 @@ public class DaoUsers {
     public Either<String, Usuario> addUsuario(Usuario usuario) {
         AtomicReference<Either<String, Usuario>> resultado = new AtomicReference<>();
         OkHttpClient clientOK = ConfigurationSingleton_OkHttpClient.getInstance();
-        String url = ConfigurationSingleton.getInstance().getRuta() + "add";
+        String url = ConfigurationSingleton.getInstance().getRuta()+ "add";
         FormBody.Builder b = new FormBody.Builder();
         b.add("usuario", gson.toJson(usuario));
         RequestBody formBody = b.build();
@@ -33,10 +33,10 @@ public class DaoUsers {
                 .onSuccess(response -> {
                     if (response.isSuccessful()) {
                         Try.of(() -> response.body().string())
-                                .onSuccess(tipo ->
-                                        Try.of(() -> gson.fromJson(tipo, Usuario.class))
+                                .onSuccess(usu ->
+                                        Try.of(() -> gson.fromJson(usu, Usuario.class))
                                                 .onSuccess(o -> resultado.set(Either.right(o)))
-                                                .onFailure(throwable -> resultado.set(Either.left("Problemas con el parseo"))))
+                                                .onFailure(throwable -> resultado.set(Either.left("problemas de parseo"))))
                                 .onFailure(throwable -> resultado.set(Either.left("error de comunicacion")));
                     } else {
                         Try.of(() -> response.body().string())
@@ -47,7 +47,7 @@ public class DaoUsers {
                 })
                 .onFailure(ConnectException.class, throwable -> {
                     log.error(throwable.getMessage(), throwable);
-                    resultado.set(Either.left("Error de conexion"));
+                    resultado.set(Either.left("error de conexion"));
                 });
         return resultado.get();
     }
@@ -58,7 +58,6 @@ public class DaoUsers {
         OkHttpClient clientOK = ConfigurationSingleton_OkHttpClient.getInstance();
         String url = "";
         url = ConfigurationSingleton.getInstance().getRuta() + "login";
-        System.out.println(url);
 
         //Como vamos a extraer un dato hacemos una llamada por GET
 

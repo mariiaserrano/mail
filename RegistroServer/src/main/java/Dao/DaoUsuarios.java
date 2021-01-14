@@ -23,40 +23,52 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 @Log4j2
 public class DaoUsuarios {
-    private static final String QUERY_INSERT_USER = "insert into usuarios2 (nombre, pass, correo, codigo, activado) values (?,?,?,?,?)";
+    private static final String QUERY_INSERT_USER = "insert into usuarios2 (nombre, password, correo, codigo, activado) values (?,?,?,?,?)";
     private static final String QUERY_SELECT_USUARIO_LOGIN = "select * from usuarios2 where nombre=? and password=?";
 
 
-
     public Either<String, Usuario> addUsuario(Usuario usuario) {
-        Either<String, Usuario> result;
-        try {
-            DBConnection db = new DBConnection();
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-            JdbcTemplate jdbcTemplate = new JdbcTemplate(db.getDataSource());
-            jdbcTemplate.update(connection -> {
-                PreparedStatement pst = connection.prepareStatement
-                        (QUERY_INSERT_USER, Statement.RETURN_GENERATED_KEYS);
-                pst.setString(1, usuario.getNombre());
-                pst.setString(2,usuario.getPass());
-                pst.setString(3,usuario.getCorreo());
-                pst.setString(4,usuario.getCodigo());
-                pst.setInt(5,usuario.getActivado());
+        AtomicReference<Either<String, Usuario>> result = new AtomicReference<>();
+        DBConnection dbConnection = new DBConnection();
+        ResultSet resultSet = null;
+        Connection con = null;
+        PreparedStatement stmt = null;
+        boolean anadido = false;
 
-                return pst;
-            }, keyHolder);
-            long key = keyHolder.getKey().longValue();
-            if (key == 0) {
-                result = Either.left("No se pudo añadir ");
-            } else {
-                result = Either.right(usuario);
+        try {
+            con = dbConnection.getConnection();
+
+            stmt = con.prepareStatement(QUERY_INSERT_USER);
+            stmt.setString(1, usuario.getNombre());
+            stmt.setString(2, usuario.getPass());
+            stmt.setString(3, usuario.getCorreo());
+            stmt.setString(4, usuario.getCodigo());
+            stmt.setInt(5,usuario.getActivado());
+
+            int filasAnadidas = -1;
+            filasAnadidas = stmt.executeUpdate();
+
+
+            if (filasAnadidas > 0) {
+                anadido = true;
+                result.set(Either.right(usuario));
             }
-        }  catch (Exception e) {
-            log.error(e.getMessage(), e);
-            result = Either.left("Error en la base de datos");
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DaoUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(DaoUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            dbConnection.cerrarConexion(con);
+            dbConnection.cerrarResultSet(resultSet);
+            dbConnection.cerrarStatement(stmt);
+
         }
-        return result;
+
+        return result.get();
+
     }
+
 
 
     public Either<String, Usuario> getUsuarioLogin(UsuarioLogin login) {
@@ -84,7 +96,7 @@ public class DaoUsuarios {
                 );
             }
 
-            if (user != null && user.getActivado()==1) {
+            if (user != null) {
                 result.set(Either.right(user));
 
             }
@@ -96,6 +108,8 @@ public class DaoUsuarios {
             dbConnection.cerrarResultSet(resultSet);
             dbConnection.cerrarStatement(preparedStatement);
         }
-        return  result.get();
+        return result.get();
+
+
     }
 }

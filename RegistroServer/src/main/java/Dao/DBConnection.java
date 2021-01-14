@@ -1,34 +1,31 @@
 package Dao;
 
+import config.ConfigurationSingleton;
 import lombok.extern.log4j.Log4j2;
-import Dao.ConfigurationSingleton;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 @Log4j2
 public class DBConnection {
 
+    public Connection getConnection() throws SQLException, ClassNotFoundException {
 
-    public Connection getConnection() throws Exception {
-        Connection connection = null;
+        Connection connection;
+
+        // solo hace falta en web.
+        //Class.forName("com.mysql.cj.jdbc.Driver");
+
+
+        Class.forName("com.mysql.cj.jdbc.Driver");
 
         connection = DriverManager.getConnection(
-                ConfigurationSingleton.getInstance().getUrlDB(),
-                ConfigurationSingleton.getInstance().getUserDB(),
-                ConfigurationSingleton.getInstance().getPassDB());
+                "jdbc:mysql://dam2.mysql.iesquevedo.es:3335/Mariadb?useSSL=false",
+                "root",
+                "quevedo2020");
+
         return connection;
-    }
-
-    public DataSource getDataSource() {
-        return DBConnectionPool.getInstance().getDataSource();
-    }
-
-    public void cerrarPool() {
-        DBConnectionPool.getInstance().cerrarPool();
     }
 
     public void cerrarConexion(Connection connection) {
@@ -38,7 +35,7 @@ public class DBConnection {
                 connection.close();
             }
         } catch (SQLException ex) {
-            log.error("No se ha podido cerrar Conexion", ex);
+            log.error("no se ha podido cerrar conexion", ex);
         }
     }
 
@@ -48,7 +45,7 @@ public class DBConnection {
                 stmt.close();
             }
         } catch (SQLException ex) {
-            log.error("No se ha podido cerrar el Statement", ex);
+            log.error("", ex);
         }
     }
 
@@ -58,7 +55,7 @@ public class DBConnection {
                 rs.close();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, "No se ha podido cerrar el ResultSet", ex);
+            log.error("", ex);
         }
     }
 
@@ -67,7 +64,9 @@ public class DBConnection {
             if (con != null)
                 con.rollback();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            log.error("", ex);
         }
     }
+
+
 }

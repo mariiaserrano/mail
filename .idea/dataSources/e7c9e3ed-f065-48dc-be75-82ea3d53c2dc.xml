@@ -1494,7 +1494,7 @@ apellidos</ColNames>
     </column>
     <column id="431" parent="341" name="password">
       <Position>2</Position>
-      <DataType>varchar(50)|0s</DataType>
+      <DataType>varchar(150)|0s</DataType>
     </column>
     <column id="432" parent="341" name="correo">
       <Position>3</Position>
