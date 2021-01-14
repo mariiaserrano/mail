@@ -1,0 +1,4 @@
+urlDB: jdbc:mysql://dam2.mysql.iesquevedo.es:3335/Mariadb?useSSL=false
+userDB: root
+passDB: quevedo2020
+mysqlDriver: com.mysql.cj.jdbc.Driver
